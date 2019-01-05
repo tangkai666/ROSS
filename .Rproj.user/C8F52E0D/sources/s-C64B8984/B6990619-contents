@@ -1,0 +1,98 @@
+rm(list = ls())    # clear the environment
+cat("\014")        # clear the console
+setwd('D:/R_program/TINA') 
+
+path_IN_results <- "D:/R_program/TINA/MZ280/MZ280_data"
+files_IN <- list.files(path = path_IN_results, full.names = TRUE)
+sample_ice = data.frame()
+for(i in 1:length(files_IN)){
+  sample_ice0 = read.csv(files_IN[i],header=TRUE,sep=",",stringsAsFactors=FALSE)   
+  sample_ice = rbind(sample_ice,sample_ice0)
+} 
+# check data
+colnames(sample_ice)
+unique(sample_ice$Sample_name)
+unique(sample_ice$Sample_dilution)
+unique(sample_ice$Particle_size)
+unique(sample_ice$Heating)
+
+# select samples
+library(dplyr)
+target =c("MZ280_1_re","MZ280_2_re","MZ280_3","MZ280_4","MZ280_5","MZ280_6","MZ280_14","MZ280_15")
+select_sample = filter(sample_ice, Sample_name %in% target)
+unique(select_sample$Sample_name)
+
+
+library("ggplot2"); packageVersion("ggplot2")
+library("scales"); packageVersion("scales")
+library("flextable"); packageVersion("flextable")
+graphics.off()   
+mytheme <- theme(plot.margin = unit(c(0.1,0.1,0.1,0.1), "npc"),
+                 panel.background = element_rect(fill='transparent'),
+                 #  panel.border = element_rect(linetype = "solid", color="black",size=1,fill = NA),
+                 panel.grid.major = element_blank(),
+                 panel.grid.minor= element_blank(),
+                 axis.title.y.left = element_text(size=28, color="black", hjust = 0.5, vjust = 7.5), 
+                 axis.title.y.right = element_blank(),
+                 axis.title.x.top = element_text(size=28, color="black", hjust = 0.5, vjust = 12), 
+                 axis.title.x.bottom = element_text(size=28, color="black", hjust = 0.5, vjust = -10.5), 
+                 axis.text.x.bottom = element_text(size=26, color="black", hjust = 0.5, vjust = -8.0),
+                 axis.text.x.top = element_text(size=26, color="black", hjust = 0.5, vjust = 9),
+                 axis.text.y.left = element_text(size=26, color="black", hjust=-1.2,vjust=0.5),
+                 axis.text.y.right = element_blank(),
+                 axis.ticks.y.left  = element_blank(),
+                 axis.ticks.y.right  = element_blank(),
+                 axis.ticks.x.top = element_line(colour = 'black', size = 1.0),
+                 axis.ticks.x.bottom = element_line(colour = 'black', size = 1.0),
+                 axis.ticks.length=unit(-4, "mm"), 
+                 axis.line = element_line(colour = 'black', size = 1, linetype = 'solid',lineend="square"),
+                 legend.position = c(0.25,0.32),
+                 legend.key=element_rect(colour=NA,fill='transparent'),
+                 legend.key.size = unit(0.04, "npc"),
+                 legend.key.width = unit(0.02, "npc"),
+                 legend.background = element_rect(fill=NA),
+                 legend.box='vertical',
+                 legend.title=element_text(size=24, color="black", face= "plain"),
+                 legend.text=element_text(size=18, color="black", face= "plain")
+) 
+ 
+# my_colors = c("#E41A1C","#377EB8","#4DAF4A","#984EA3","#FF7F00","#A65628")
+my_colors = brewer.pal(8,"Set1")
+breaks_col = c("MZ280_1_re","MZ280_2_re","MZ280_3","MZ280_4","MZ280_5","MZ280_6","MZ280_14","MZ280_15")
+title_col = c("MZ280")
+label_col = c("Vortex  2700 rpm","Mixer  F1  99 rpm","Mixer  F9  99 rpm","Mixer  99°  99 rpm","Mixer  u1  68 rpm","Mixer  U1  39 rpm",
+              "Mixer  U1  39 rpm repeat","Mixer  U1  39 rpm  30 min")
+
+y_bottom = 1e-6
+y_top = 1e4
+y_breaks = 6
+ticks_bottom = data.frame(x = seq(-30, 0, by = 1), xend = seq(-30, 0, by = 1), y = y_bottom, yend = y_bottom*1.5)
+ticks_top = data.frame(x = seq(-29.15, -0.15, by = 1), xend = seq(-29.15, -0.15, by = 1), y = y_top, yend = y_top*0.65)
+ggplot(select_sample, aes(x = temperature_corr, y = N_cumIN)) +
+  geom_point(aes(col = Sample_name),shape=3, size=1.5, stroke=1.5) + mytheme + 
+  scale_colour_manual(title_col,values = my_colors,  breaks = breaks_col,
+                      labels = label_col) + 
+  guides(col = guide_legend(reverse=FALSE,order=1)) +
+  # Alt键，同时输入0176   
+  scale_x_continuous(name = expression(paste(italic("T")," [°C]")),limits = c(-30, 0.0),breaks=seq(-30,0,by=5),
+                     labels=seq(-30,0,by=5), 
+                     minor_breaks=seq(-30,0,by=1), expand = c(0,0),
+                     sec.axis = sec_axis(~ .+273.15, name = expression(paste(italic("T")," [K]")),breaks=seq(245,270,by=5.0))) +
+  scale_y_continuous(name = expression(paste(italic("N")[m]," [",L^-1,"]")), 
+                     limits = c(y_bottom,y_top),
+                     breaks = trans_breaks("log10", function(x) 10 ^ x,n=y_breaks), 
+                     labels = trans_format("log10", math_format(10^.x)), 
+                     trans = "log10",expand = c(0,0),
+                     sec.axis = sec_axis(~ .)) +
+  annotation_logticks(base = 10,sides="l",scaled = TRUE,size = 1.0, 
+                      short = unit(2.5,"mm"),
+                      mid = unit(2.5,"mm"),
+                      long = unit(4,"mm")) +
+  geom_segment(data = ticks_bottom, aes(x = x, y = y, xend = xend, yend = yend),size = 1.0)+
+  geom_segment(data = ticks_top, aes(x = x, y = y, xend = xend, yend = yend),size = 1.0)
+
+ggsave(filename="Kai_MZ280_extraction_test_v4_2.png",plot = last_plot(),device="png",
+       path="D:/R_program/TINA/MZ280",scale = 1,width = 28, height = 21, units = "cm",dpi = 300, limitsize = TRUE)
+
+# "eps", "ps", "tex" (pictex), "pdf", "jpeg", "tiff", "png", "bmp", "svg" or "wmf"
+

@@ -1,0 +1,23 @@
+{
+    "collab_server" : "",
+    "contents" : "",
+    "created" : 1545997126177.000,
+    "dirty" : false,
+    "encoding" : "UTF-8",
+    "folds" : "",
+    "hash" : "1830223169",
+    "id" : "A2F8A56E",
+    "lastKnownWriteTime" : 1545997280,
+    "last_content_update" : 1545997280841,
+    "path" : "D:/R_program/Outliers/OutliersO3.R",
+    "project_path" : null,
+    "properties" : {
+        "cursorPosition" : "9,15",
+        "scrollLine" : "0",
+        "tempName" : "Untitled1"
+    },
+    "relative_order" : 4,
+    "source_on_save" : false,
+    "source_window" : "",
+    "type" : "r_source"
+}

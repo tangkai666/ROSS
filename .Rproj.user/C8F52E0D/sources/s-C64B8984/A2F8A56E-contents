@@ -1,0 +1,14 @@
+rm(list = ls())    # clear the environment
+cat("\014")        # clear the console
+setwd('D:/R_program/Outliers') 
+
+install.packages("OutliersO3")
+require("OutliersO3")
+install.packages("mbgraphic")
+require("mbgraphic")
+
+data(Election2005, package="mbgraphic")
+data <- Election2005[, c(6, 10, 17, 28)]
+O3s <- O3prep(data, method="HDo", tols=0.05, boxplotLimits=6)
+O3s1 <- O3plotT(O3s, caseNames=Election2005$Name)
+O3s1$gO3

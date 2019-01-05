@@ -1,0 +1,31 @@
+rm(list = ls())    # clear the environment
+cat("\014")        # clear the console
+setwd('D:/R_program/Outliers') 
+
+install.packages("outliers")
+require("outliers")
+set.seed(1234)
+y=rnorm(100)
+outlier(y)
+outlier(y,opposite=TRUE)
+dim(y) <- c(20,5)  # convert it to a matrix
+outlier(y)
+outlier(y,opposite=TRUE)
+
+set.seed(1234)
+x = rnorm(10)
+scores(x)  # z-scores => (x-mean)/sd
+scores(x, type="chisq")  # chi-sq scores => (x - mean(x))^2/var(x)
+scores(x, type="t")  # t scores
+scores(x, type="chisq", prob=0.9)  # beyond 90th %ile based on chi-sq
+scores(x, type="chisq", prob=0.95)  # beyond 95th %ile
+scores(x, type="z", prob=0.95)  # beyond 95th %ile based on z-scores
+scores(x, type="t", prob=0.95)  # beyond 95th %ile based on t-scores
+scores(x)
+scores(x,prob=1)
+scores(x,prob=0.5)
+scores(x,prob=0.1)
+scores(x,prob=0.93)
+scores(x,type="iqr")
+scores(x,type="mad")
+scores(x,prob=0)

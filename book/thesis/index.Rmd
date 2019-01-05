@@ -1,0 +1,31 @@
+--- 
+title: "title"
+author: "author"
+date: ""
+institute: Bayreuth Graduate School of Mathematical and Natural Sciences (BAYNAT)
+university: University of Bayreuth
+degree: Doctor of Natural Science (Dr. rer. nat.)
+author_title: M.Sc. Environmental Sciences
+birthday: 12 Oct. 2000
+birth_place: Henan, China
+supervisor: Dr. J. L.
+output:
+  bookdown::pdf_book:
+    template: tex/template_ubt.tex
+    keep_tex: yes
+    citation_package: natbib
+#    latex_engine: xelatex
+    toc_depth: 3
+    toc_unnumbered: no
+    toc_appendix: yes
+    pandoc_args:  --top-level-division=chapter
+    quote_footer: ["\\begin{flushright}", "\\end{flushright}"]
+bibliography: [bib/bib.bib]
+biblio-style: apalike # plainnat
+link-citations: yes
+colorlinks: no  
+# toc: no
+lot: no
+lof: no
+site: bookdown::bookdown_site
+---
